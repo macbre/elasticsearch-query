@@ -7,18 +7,25 @@ import logging
 import time
 
 from datetime import datetime
-from dateutil import tz
 from itertools import islice
+
+from dateutil import tz
 
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import scan
 
 
 class KibanaError(Exception):
+    """
+    Error that can be raised by Kibana class
+    """
     pass
 
 
 class Kibana(object):
+    """
+    Elasticsearch client
+    """
     # give 5 seconds for all log messages to reach logstash and be stored in elasticsearch
     SHORT_DELAY = 5
 
@@ -41,7 +48,7 @@ class Kibana(object):
         :type batch_size int
 
         :arg since: UNIX timestamp data should be fetched since
-        :arg period: period (in seconds) before now() to be used when since is empty (defaults to last 15 minutes)
+        :arg period: period (in seconds) before now() to be used when since is empty(defaults to last 15 minutes)
         :arg es_host: customize Elasticsearch host(s) that should be used for querying
         :arg read_timeout: customize Elasticsearch read timeout (defaults to 10 s)
         :arg index_prefix name of the Elasticsearch index (defaults to 'logstash-other')
@@ -293,6 +300,7 @@ class Kibana(object):
             "doc_count": 8912859
         }
         """
+
         for bucket in res['aggregations']['group_by_agg']['buckets']:
             entry = {
                 "count": bucket['doc_count']
