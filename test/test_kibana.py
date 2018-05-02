@@ -4,7 +4,7 @@ Set of unit tests for kibana.py
 import time
 import unittest
 
-from kibana import Kibana
+from wikia_common_kibana import Kibana
 
 
 class KibanaTestClass(unittest.TestCase):

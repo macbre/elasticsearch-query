@@ -1,4 +1,4 @@
-wikia.common.kibana
+wikia_common_kibana
 ===================
 
 Run queries against Kibana's Elasticsearch.
@@ -7,7 +7,7 @@ Basic Usage
 -----------
 
 ::
-	from wikia.common.kibana import Kibana
+	from wikia_common_kibana import Kibana
 	source = Kibana(since=12345, period=900)
 
 since: UNIX timestamp data should be fetched since (if None, then period specifies the last n seconds).

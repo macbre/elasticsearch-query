@@ -11,7 +11,7 @@ setup(
     license='MIT',
     description='Run queries against Kibana\'s Elasticsearch 6',
     url='https://github.com/macbre/wikia-common-kibana',
-    py_modules=["kibana"],
+    py_modules=["wikia_common_kibana"],
     extras_require={
         'dev': [
             'coverage==4.5.1',
