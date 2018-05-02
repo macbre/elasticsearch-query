@@ -17,9 +17,22 @@ class KibanaTestClass(unittest.TestCase):
         assert instance._index.startswith('logstash-')
 
     @staticmethod
+    def test_indexes_prefix():
+        instance = Kibana(index_prefix='syslog-ng')
+        assert instance._index.startswith('syslog-ng-')
+
+    @staticmethod
+    def test_indexes_prefix():
+        instance = Kibana(index_prefix='syslog-ng', index_sep="_")
+        assert instance._index.startswith('syslog-ng_')
+        assert ',syslog-ng_' in instance._index
+
+    @staticmethod
     def test_format_index():
-        assert Kibana.format_index(prefix='logstash', ts=1) == 'logstash-1970.01.01'
-        assert Kibana.format_index(prefix='logstash', ts=1408450795) == 'logstash-2014.08.19'
+        assert Kibana.format_index(prefix='logstash', timestamp=1) == 'logstash-1970.01.01'
+        assert Kibana.format_index(prefix='logstash', timestamp=1408450795) == 'logstash-2014.08.19'
+        assert Kibana.format_index(prefix='logstash-foo', timestamp=1408450795) == 'logstash-foo-2014.08.19'
+        assert Kibana.format_index(prefix='syslog-ng', timestamp=1408450795, sep="_") == 'syslog-ng_2014.08.19'
 
     def test_time(self):
         now = int(time.time())

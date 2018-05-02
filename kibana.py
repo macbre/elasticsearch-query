@@ -28,14 +28,16 @@ class Kibana(object):
     ELASTICSEARCH_HOST = 'logs-prod.es.service.sjc.consul'  # ES5
 
     """ Interface for querying Kibana's storage """
-    def __init__(self, since=None, period=900, es_host=None, read_timeout=10, index_prefix='logstash-other',
-                 batch_size=1000):
+    def __init__(
+            self, since=None, period=900, es_host=None,
+            read_timeout=10, index_prefix='logstash-other', index_sep='-', batch_size=1000):
         """
         :type since int
         :type period int
         :type es_host str
         :type read_timeout int
         :type index_prefix str
+        :type index_sep str
         :type batch_size int
 
         :arg since: UNIX timestamp data should be fetched since
@@ -65,8 +67,8 @@ class Kibana(object):
         # Elasticsearch index to query
         # from today and yesterday
         self._index = ','.join([
-            self.format_index(index_prefix, now-self.DAY),
-            self.format_index(index_prefix, now),
+            self.format_index(prefix=index_prefix, timestamp=now-self.DAY, sep=index_sep),
+            self.format_index(prefix=index_prefix, timestamp=now, sep=index_sep),
         ])
 
         self._logger.info("Using {} indices".format(self._index))
@@ -74,27 +76,32 @@ class Kibana(object):
                           format(self.format_timestamp(self._since), self.format_timestamp(self._to)))
 
     @staticmethod
-    def format_index(prefix, ts):
+    def format_index(prefix, timestamp, sep='-'):
         """
         :type prefix str
-        :type ts int
+        :type timestamp int
+        :type sep str
         :rtype: str
         """
         tz_info = tz.tzutc()
 
         # ex. logstash-other-2017.05.09
-        return "{prefix}-{date}".format(prefix=prefix, date=datetime.fromtimestamp(ts, tz=tz_info).strftime('%Y.%m.%d'))
+        return "{prefix}{sep}{date}".format(
+            prefix=prefix, sep=sep, date=datetime.fromtimestamp(timestamp, tz=tz_info).strftime('%Y.%m.%d'))
 
     @staticmethod
-    def format_timestamp(ts):
+    def format_timestamp(timestamp):
         """
         Format the UTC timestamp for Elasticsearch
         eg. 2014-07-09T08:37:18.000Z
 
         @see https://docs.python.org/2/library/time.html#time.strftime
+
+        :type timestamp int
+        :rtype: str
         """
         tz_info = tz.tzutc()
-        return datetime.fromtimestamp(ts, tz=tz_info).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+        return datetime.fromtimestamp(timestamp, tz=tz_info).strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
     def _get_timestamp_filer(self):
         return {
