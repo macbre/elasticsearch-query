@@ -1,6 +1,9 @@
 wikia_common_kibana
 ===================
 
+.. image:: https://travis-ci.org/macbre/wikia-common-kibana.svg?branch=master
+    :target: https://travis-ci.org/macbre/wikia-common-kibana
+
 Run queries against Kibana's Elasticsearch.
 
 Basic Usage
