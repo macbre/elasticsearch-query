@@ -1,6 +1,6 @@
 from setuptools import setup
 
-VERSION = '2.2.3'
+VERSION = '2.2.4'
 
 # @see https://github.com/pypa/sampleproject/blob/master/setup.py
 setup(
@@ -15,8 +15,8 @@ setup(
     extras_require={
         'dev': [
             'coverage==4.5.1',
-            'pylint==1.8.2',
-            'pytest==3.4.0',
+            'pylint==1.8.4',
+            'pytest==3.5.1',
         ]
     },
     install_requires=[

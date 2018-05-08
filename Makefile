@@ -16,7 +16,7 @@ coverage:
 	coverage report $(coverage_options)
 
 lint:
-	pylint sql_metadata.py
+	pylint wikia_common_kibana.py
 
 publish:
 	# run git tag -a v0.0.0 before running make publish
