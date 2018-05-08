@@ -5,4 +5,4 @@ python:
   - "3.5"
   - "3.6"
 install: pip install -e .[dev]
-script: py.test test
+script: make test && make lint
