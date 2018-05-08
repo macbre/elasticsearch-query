@@ -66,7 +66,7 @@ class Kibana(object):
             since = now - period
         else:
             since += 1
-            self._logger.info("Using provided {0} timestamp as since ({1} seconds ago)".format(since, now - since))
+            self._logger.info("Using provided %s timestamp as since (%d seconds ago)", since, now - since)
 
         self._since = since
         self._to = now - self.SHORT_DELAY  # give logs some time to reach Logstash
@@ -78,9 +78,9 @@ class Kibana(object):
             self.format_index(prefix=index_prefix, timestamp=now, sep=index_sep),
         ])
 
-        self._logger.info("Using {} indices".format(self._index))
-        self._logger.info("Querying for messages from between {} and {}".
-                          format(self.format_timestamp(self._since), self.format_timestamp(self._to)))
+        self._logger.info("Using %s indices", self._index)
+        self._logger.info("Querying for messages from between %s and %s",
+                          self.format_timestamp(self._since), self.format_timestamp(self._to))
 
     @staticmethod
     def format_index(prefix, timestamp, sep='-'):
@@ -274,7 +274,7 @@ class Kibana(object):
         # add @timestamp range
         body['query']['bool']['must'].append(self._get_timestamp_filer())
 
-        self._logger.info("Getting aggregations for {} field when grouped by {}".format(group_by, stats_field))
+        self._logger.info("Getting aggregations for %s field when grouped by %s", group_by, stats_field)
 
         res = self._es.search(
             body=body,
