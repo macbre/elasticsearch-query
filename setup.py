@@ -1,6 +1,6 @@
 from setuptools import setup
 
-VERSION = '2.2.4'
+VERSION = '2.2.5'
 
 # @see https://github.com/pypa/sampleproject/blob/master/setup.py
 setup(
@@ -21,6 +21,6 @@ setup(
     },
     install_requires=[
         "elasticsearch>=6.0.0,<7.0.0",
-        "python-dateutil==2.2",
+        "python-dateutil==2.7.2",
     ]
 )
