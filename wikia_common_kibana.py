@@ -120,11 +120,12 @@ class Kibana(object):
             }
         }
 
-    def _search(self, query, limit=50000, sampling=None):
+    def _search(self, query, fields=None, limit=50000, sampling=None):
         """
         Perform the search and return raw rows
 
         :type query object
+        :type fields list[str] or None
         :type limit int
         :type sampling int or None
 
@@ -141,6 +142,12 @@ class Kibana(object):
                 }
             }
         }
+
+        # @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-source-filtering.html
+        if fields:
+            body['_source'] = {
+                "includes": fields
+            }
 
         # add @timestamp range
         # @see http://stackoverflow.com/questions/40996266/elasticsearch-5-1-unknown-key-for-a-start-object-in-filters
@@ -184,11 +191,12 @@ class Kibana(object):
         self._logger.info("{:d} rows returned".format(len(rows)))
         return rows
 
-    def get_rows(self, match, limit=10, sampling=None):
+    def get_rows(self, match, fields=None, limit=10, sampling=None):
         """
         Returns raw rows that matches given query
 
         :arg match: query to be run against Kibana log messages (ex. {"@message": "Foo Bar DB queries"})
+        :type fields list[str] or None
         :arg limit: the number of results (defaults to 10)
         :type sampling int or None
         :arg sampling: Percentage of results to be returned (0,100)
@@ -197,13 +205,14 @@ class Kibana(object):
             "match": match,
         }
 
-        return self._search(query, limit, sampling)
+        return self._search(query, fields, limit, sampling)
 
-    def query_by_string(self, query, limit=10, sampling=None):
+    def query_by_string(self, query, fields=None, limit=10, sampling=None):
         """
         Returns raw rows that matches the given query string
 
         :arg query: query string to be run against Kibana log messages (ex. @message:"^PHP Fatal").
+        :type fields list[str] or None
         :arg limit: the number of results (defaults to 10)
         :type sampling int or None
         :arg sampling: Percentage of results to be returned (0,100)
@@ -214,7 +223,7 @@ class Kibana(object):
             }
         }
 
-        return self._search(query, limit, sampling)
+        return self._search(query, fields, limit, sampling)
 
     def get_to_timestamp(self):
         """ Return the upper time boundary to returned data """
