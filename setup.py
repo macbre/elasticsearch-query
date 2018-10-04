@@ -15,12 +15,12 @@ setup(
     extras_require={
         'dev': [
             'coverage==4.5.1',
-            'pylint==1.8.4',
-            'pytest==3.5.1',
+            'pylint==1.9.2',
+            'pytest==3.8.2',
         ]
     },
     install_requires=[
         "elasticsearch>=6.0.0,<7.0.0",
-        "python-dateutil==2.7.2",
+        "python-dateutil==2.7.3",
     ]
 )
