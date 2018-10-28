@@ -1,6 +1,6 @@
 from setuptools import setup
 
-VERSION = '2.2.6'
+VERSION = '2.2.7'
 
 # @see https://github.com/pypa/sampleproject/blob/master/setup.py
 setup(
@@ -10,6 +10,7 @@ setup(
     author_email='techteam-l@wikia-inc.com',
     license='MIT',
     description='Run queries against Kibana\'s Elasticsearch 6',
+    keywords='logstash kibana elasticsearch logging',
     url='https://github.com/macbre/wikia-common-kibana',
     py_modules=["wikia_common_kibana"],
     extras_require={
