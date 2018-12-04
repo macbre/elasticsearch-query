@@ -14,8 +14,10 @@ pip install elasticsearch-query
 
 ```python
 from elasticsearch_query import ElasticsearchQuery
-es_query = ElasticsearchQuery(since=12345, period=900)
+es_query = ElasticsearchQuery(es_host='es.prod', since=12345, period=900)
 ```
+
+`es_host` needs to be specified with a host of Elasticsearch instance to connect.
 
 Provide either `since` (absolute timestamp) or `period` (last N seconds):
 

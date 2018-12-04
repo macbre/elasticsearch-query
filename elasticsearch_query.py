@@ -17,7 +17,7 @@ from elasticsearch.helpers import scan
 
 class ElasticsearchQueryError(Exception):
     """
-    Error that can be raised by Kibana class
+    Error that can be raised by ElasticsearchQuery class
     """
     pass
 
@@ -32,32 +32,30 @@ class ElasticsearchQuery(object):
     # seconds in 24h used to get the es index for yesterday
     DAY = 86400
 
-    ELASTICSEARCH_HOST = 'logs-prod.es.service.sjc.consul'  # ES5
-
-    """ Interface for querying Kibana's storage """
+    """ Interface for querying Elasticsearch storage """
     def __init__(
-            self, since=None, period=900, es_host=None,
+            self, es_host, since=None, period=900,
             read_timeout=10, index_prefix='logstash-other', index_sep='-', batch_size=1000):
         """
+        :type es_host str
         :type since int
         :type period int
-        :type es_host str
         :type read_timeout int
         :type index_prefix str
         :type index_sep str
         :type batch_size int
 
+        :arg es_host: Elasticsearch host(s) that should be used for querying
         :arg since: UNIX timestamp data should be fetched since
         :arg period: period (in seconds) before now() to be used when since is empty(defaults to last 15 minutes)
-        :arg es_host: customize Elasticsearch host(s) that should be used for querying
         :arg read_timeout: customize Elasticsearch read timeout (defaults to 10 s)
         :arg index_prefix name of the Elasticsearch index (defaults to 'logstash-other')
         :arg batch_size size of the batch sent in every requests of the ELK scroll API (defaults to 1000)
         """
-        self._es = Elasticsearch(hosts=es_host if es_host else self.ELASTICSEARCH_HOST, timeout=read_timeout)
+        self._es = Elasticsearch(hosts=es_host, timeout=read_timeout)
         self._batch_size = batch_size
 
-        self._logger = logging.getLogger('kibana')
+        self._logger = logging.getLogger(self.__class__.__name__)
 
         # if no timestamp provided, fallback to now() in UTC
         now = int(time.time())
