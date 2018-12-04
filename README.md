@@ -4,7 +4,7 @@ elasticsearch-query
 [![PyPI](https://img.shields.io/pypi/v/elasticsearch-query.svg)](https://pypi.python.org/pypi/elasticsearch-query)
 [![Build Status](https://travis-ci.org/macbre/elasticsearch-query.svg?branch=master)](https://travis-ci.org/macbre/elasticsearch-query)
 
-Run queries against Kibana's Elasticsearch that gets logs from Logstash.
+Run queries against Kibana's Elasticsearch that gets logs from Logstash. Forked from [Wikia's `kibana.py`](https://github.com/Wikia/python-commons/blob/master/wikia/common/kibana/kibana.py).
 
 ```
 pip install elasticsearch-query
