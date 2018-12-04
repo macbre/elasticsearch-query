@@ -8,3 +8,5 @@ install: make install
 script:
   - make coverage
   - make lint
+# @see https://github.com/nickstenning/travis-pip-cache/issues/1
+cache: pip
