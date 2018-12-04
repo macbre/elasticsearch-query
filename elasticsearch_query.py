@@ -1,5 +1,5 @@
 """
-Run queries against Kibana's elasticsearch
+Run queries against Kibana's Elasticsearch that gets logs from Logstash.
 @see http://elasticsearch-py.readthedocs.org/en/master/
 """
 import json
@@ -15,14 +15,14 @@ from elasticsearch import Elasticsearch
 from elasticsearch.helpers import scan
 
 
-class KibanaError(Exception):
+class ElasticsearchQueryError(Exception):
     """
     Error that can be raised by Kibana class
     """
     pass
 
 
-class Kibana(object):
+class ElasticsearchQuery(object):
     """
     Elasticsearch client
     """

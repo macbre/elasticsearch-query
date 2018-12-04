@@ -1,10 +1,10 @@
-wikia-common-kibana
+elasticsearch-query
 ===================
 
 .. image:: https://travis-ci.org/macbre/wikia-common-kibana.svg?branch=master
     :target: https://travis-ci.org/macbre/wikia-common-kibana
 
-Run queries against Kibana's Elasticsearch.
+Run queries against Kibana's Elasticsearch that gets logs from Logstash.
 
 ::
 
