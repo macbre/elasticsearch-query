@@ -2,17 +2,23 @@ from setuptools import setup
 
 VERSION = '2.2.7'
 
+# @see https://packaging.python.org/tutorials/packaging-projects/#creating-setup-py
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 # @see https://github.com/pypa/sampleproject/blob/master/setup.py
 setup(
-    name='wikia_common_kibana',
+    name='elasticsearch-query',
     version=VERSION,
-    author='Wikia Engineering',
-    author_email='techteam-l@wikia-inc.com',
+    author='Maciej Brencz',
+    author_email='macbre@wikia-inc.com',
     license='MIT',
-    description='Run queries against Kibana\'s Elasticsearch 6',
+    description='Run queries against Kibana\'s Elasticsearch that gets logs from Logstash.',
     keywords='logstash kibana elasticsearch logging',
-    url='https://github.com/macbre/wikia-common-kibana',
-    py_modules=["wikia_common_kibana"],
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url='https://github.com/macbre/elasticsearch-query',
+    py_modules=["elasticsearch_query"],
     extras_require={
         'dev': [
             'coverage==4.5.1',
