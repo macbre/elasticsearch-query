@@ -10,9 +10,16 @@ script:
   - make lint
 # @see https://github.com/nickstenning/travis-pip-cache/issues/1
 cache: pip
-# use Travis instance of elasticsearch (v5.5.0)
-services:
-  - elasticsearch
+
+# install elasticsearch 6.x
+# @see https://github.com/macbre/elasticsearch-query/issues/9
+env:
+  - ES_TEST_HOST=127.0.0.1 ES_VERSION=6.5.1 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-${ES_VERSION}.tar.gz
+before_install:
+  - wget ${ES_DOWNLOAD_URL}
+  - tar -xzf elasticsearch-oss-${ES_VERSION}.tar.gz
+  - ./elasticsearch-${ES_VERSION}/bin/elasticsearch &
 before_script:
   # wait for the server to be fully up
-  - wget -q --waitretry=1 --retry-connrefused -T 10 -O - http://127.0.0.1:9200
+  - wget --waitretry=1 --retry-connrefused -T 10 -O - http://127.0.0.1:9200
+  - echo "Elasticsearch v${ES_VERSION} up and running!"
