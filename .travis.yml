@@ -10,3 +10,9 @@ script:
   - make lint
 # @see https://github.com/nickstenning/travis-pip-cache/issues/1
 cache: pip
+# use Travis instance of elasticsearch (v5.5.0)
+services:
+  - elasticsearch
+before_script:
+  # wait for the server to be fully up
+  - wget -q --waitretry=1 --retry-connrefused -T 10 -O - http://127.0.0.1:9200
