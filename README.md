@@ -55,3 +55,9 @@ es_query.query_by_string(query='@message:"^PHP Fatal"', fields=['@message', '@es
 ```python
 es_query.get_to_timestamp()
 ```
+
+## Integration tests
+
+`elasticsearch-query` comes with integration tests suite. `.travis.yml` will install elasticsearch OSS version and run them.
+
+But you can also run it locally. Simply pass `ES_TEST_HOST=<elasticsearch IP>` env variable when running tests (`make test`).
