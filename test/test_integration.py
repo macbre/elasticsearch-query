@@ -127,6 +127,15 @@ class IntegrationTests(TestCase):
         assert len(res) == 1, 'Matching entries are returned'
         assert res[0]['host'] == 'app2.prod'
 
+    def test_query_with_fields(self):
+        es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix=self.APP_LOGS_INDEX_NAME)
+
+        res = es_query.query_by_string('host: "app2"', fields=['host'])
+        assert res == [{'host': 'app2.prod'}]
+
+        res = es_query.query_by_string('host: "app2"', fields=['appname', 'host'])
+        assert res == [{'appname': 'foo', 'host': 'app2.prod'}]
+
     def test_get_aggregations(self):
         es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix=self.APP_LOGS_INDEX_NAME)
 
