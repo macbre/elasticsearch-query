@@ -42,7 +42,7 @@ def set_up_fixtures(es_host):
             set_up_using_fixture_file(es_host, fixture_file=path.join(fixtures_directory, file))
 
     # wait for the shard to be up to date with changes made
-    time.sleep(1)
+    time.sleep(2)
 
 
 def set_up_using_fixture_file(es_host, fixture_file):
