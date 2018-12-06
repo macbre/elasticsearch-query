@@ -41,9 +41,6 @@ def set_up_fixtures(es_host):
         for file in sorted(files):
             set_up_using_fixture_file(es_host, fixture_file=path.join(fixtures_directory, file))
 
-    # wait for the shard to be up to date with changes made
-    time.sleep(2)
-
 
 def set_up_using_fixture_file(es_host, fixture_file):
     """
@@ -75,7 +72,7 @@ def set_up_using_fixture_file(es_host, fixture_file):
         entry['@timestamp'] = timestamp
 
         logging.info('%s: indexing %s', index_name, entry)
-        es.index(index=index_name, doc_type='log', body=entry)
+        es.index(index=index_name, doc_type='log', body=entry, refresh='wait_for')
 
 
 class IntegrationTests(TestCase):
