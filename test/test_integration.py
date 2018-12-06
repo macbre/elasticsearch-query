@@ -130,6 +130,17 @@ class IntegrationTests(TestCase):
         assert len(res) == 1, 'Matching entries are returned'
         assert res[0]['host'] == 'app2.prod'
 
+    def test_get_aggregations(self):
+        es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix=self.APP_LOGS_INDEX_NAME)
+
+        res = es_query.get_aggregations(
+            query='*', stats_field='time', group_by='appname.keyword')
+        assert res == {'foo': {'count': 3, '50.0': 210.0, '95.0': 320.0, '99.0': 320.0, '99.9': 320.0}}
+
+        res = es_query.get_aggregations(
+            query='*', stats_field='time', group_by='appname.keyword', percents=(25, 50, 75))
+        assert res == {'foo': {'count': 3, '25.0': 142.5, '50.0': 210.0, '75.0': 292.5}}
+
     def test_not_existing_index(self):
         es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix='not-existing-one')
 
