@@ -1,0 +1,14 @@
+index: app-logs
+entries:
+  - appname: foo
+    host: app1.prod
+    message: "Foo Bar"
+    time: 320
+  - appname: foo
+    host: app2.prod
+    message: "Foo Bar Test"
+    time: 210
+  - appname: foo
+    host: app3.prod
+    message: "Foo Bar Test"
+    time: 120

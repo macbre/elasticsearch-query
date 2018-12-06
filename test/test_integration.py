@@ -5,22 +5,87 @@ Set of integration tests. They're run on elasticsearch instance.
 2. Files from fixtures/ directory will be enumerated and indices filled with data (one file per one index).
 3. Enjoy.
 """
-from os import getenv
+import time
+from os import getenv, path, walk
 from pytest import raises
 from unittest import TestCase
 
+import elasticsearch_query
+import yaml
+
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
-from elasticsearch_query import ElasticsearchQuery
+
+# useful for test failures debugging
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+
+class ElasticsearchQuery(elasticsearch_query.ElasticsearchQuery):
+    """
+    ElasticsearchQuery sub-class that does not append timestamp to index names.
+    Quite handy for tests.
+    """
+    @staticmethod
+    def format_index(prefix, timestamp, sep='-'):
+        return prefix
+
+
+def set_up_fixtures(es_host):
+    """
+    :type es_host str
+    """
+    fixtures_directory = path.join(path.dirname(__file__), 'fixtures')
+
+    for _, _, files in walk(fixtures_directory):
+        for file in sorted(files):
+            set_up_using_fixture_file(es_host, fixture_file=path.join(fixtures_directory, file))
+
+
+def set_up_using_fixture_file(es_host, fixture_file):
+    """
+    :type es_host str
+    :type fixture_file str
+    """
+    es = Elasticsearch(hosts=es_host)
+
+    with open(fixture_file, 'rt') as handler:
+        fixture = yaml.load(handler)
+
+    index_name = fixture['index']
+    entries = fixture.get('entries', [])
+
+    # @see https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-create-index.html
+    if es.indices.exists(index_name):
+        es.indices.delete(index_name)
+
+    es.indices.create(index_name)
+
+    # fill with data
+    # @see https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-index_.html
+    # @see http://127.0.0.1:9200/app-logs,app-logs/_search
+
+    # set @timestamp field 15 seconds in the past
+    timestamp = ElasticsearchQuery.format_timestamp(int(time.time()) - 15)
+
+    for entry in entries:
+        entry['@timestamp'] = timestamp
+
+        logging.info('%s: indexing %s', index_name, entry)
+        es.index(index=index_name, doc_type='log', body=entry)
 
 
 class IntegrationTests(TestCase):
+    EMPTY_INDEX_NAME = 'empty-index'  # see fixtures/00-empty-index.yml
+    APP_LOGS_INDEX_NAME = 'app-logs'  # see fixtures/01-app-logs.yml
+
     @classmethod
     def setUpClass(cls):
         cls.es_test_host = getenv('ES_TEST_HOST')
 
-        # TODO: setup indices data
-        pass
+        if cls.es_test_host:
+            # setup indices data
+            set_up_fixtures(cls.es_test_host)
 
     def setUp(self):
         if self.es_test_host is None:
@@ -32,6 +97,30 @@ class IntegrationTests(TestCase):
 
         print(info)
         assert info['tagline'] == 'You Know, for Search'
+
+    def test_invalid_query(self):
+        es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix=self.EMPTY_INDEX_NAME)
+
+        res = es_query.query_by_string('SELECT foo FROM bar')
+        assert len(res) == 0, 'Result is an empty list'
+
+    """
+    def test_get_rows(self):
+        es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix=self.APP_LOGS_INDEX_NAME)
+
+        # @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search.html#search-routing
+        res = es_query.get_rows(match={'message': '*'})
+        assert len(res) == 3, 'All entries are returned'
+        assert False
+
+    def test_query(self):
+        es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix=self.APP_LOGS_INDEX_NAME)
+
+        # @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search.html#search-routing
+        res = es_query.query_by_string('*')
+        assert len(res) == 3, 'All entries are returned'
+        assert False
+    """
 
     def test_not_existing_index(self):
         es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix='not-existing-one')
