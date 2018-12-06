@@ -246,7 +246,7 @@ class ElasticsearchQuery(object):
         :type query str
         :type group_by str
         :type stats_field str
-        :type percents set
+        :type percents tuple[int]
         :type size int
         :rtype: dict
         """
