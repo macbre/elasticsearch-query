@@ -41,6 +41,9 @@ def set_up_fixtures(es_host):
         for file in sorted(files):
             set_up_using_fixture_file(es_host, fixture_file=path.join(fixtures_directory, file))
 
+    # wait for the shard to be up to date with changes made
+    time.sleep(1)
+
 
 def set_up_using_fixture_file(es_host, fixture_file):
     """
@@ -104,14 +107,17 @@ class IntegrationTests(TestCase):
         res = es_query.query_by_string('SELECT foo FROM bar')
         assert len(res) == 0, 'Result is an empty list'
 
-    """
     def test_get_rows(self):
         es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix=self.APP_LOGS_INDEX_NAME)
 
         # @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search.html#search-routing
-        res = es_query.get_rows(match={'message': '*'})
+        res = es_query.get_rows(match={'host': 'prod'})
         assert len(res) == 3, 'All entries are returned'
-        assert False
+        assert str(res[0]['host']).endswith('.prod')
+
+        res = es_query.get_rows(match={'host': 'app2'})
+        assert len(res) == 1, 'Matching entries are returned'
+        assert res[0]['host'] == 'app2.prod'
 
     def test_query(self):
         es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix=self.APP_LOGS_INDEX_NAME)
@@ -119,8 +125,10 @@ class IntegrationTests(TestCase):
         # @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search.html#search-routing
         res = es_query.query_by_string('*')
         assert len(res) == 3, 'All entries are returned'
-        assert False
-    """
+
+        res = es_query.query_by_string('host: "app2"')
+        assert len(res) == 1, 'Matching entries are returned'
+        assert res[0]['host'] == 'app2.prod'
 
     def test_not_existing_index(self):
         es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix='not-existing-one')
