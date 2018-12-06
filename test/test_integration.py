@@ -41,9 +41,6 @@ def set_up_fixtures(es_host):
         for file in sorted(files):
             set_up_using_fixture_file(es_host, fixture_file=path.join(fixtures_directory, file))
 
-    # wait for the shard to be up to date with changes made
-    time.sleep(2)
-
 
 def set_up_using_fixture_file(es_host, fixture_file):
     """
@@ -75,7 +72,7 @@ def set_up_using_fixture_file(es_host, fixture_file):
         entry['@timestamp'] = timestamp
 
         logging.info('%s: indexing %s', index_name, entry)
-        es.index(index=index_name, doc_type='log', body=entry)
+        es.index(index=index_name, doc_type='log', body=entry, refresh='wait_for')
 
 
 class IntegrationTests(TestCase):
@@ -129,6 +126,15 @@ class IntegrationTests(TestCase):
         res = es_query.query_by_string('host: "app2"')
         assert len(res) == 1, 'Matching entries are returned'
         assert res[0]['host'] == 'app2.prod'
+
+    def test_query_with_fields(self):
+        es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix=self.APP_LOGS_INDEX_NAME)
+
+        res = es_query.query_by_string('host: "app2"', fields=['host'])
+        assert res == [{'host': 'app2.prod'}]
+
+        res = es_query.query_by_string('host: "app2"', fields=['appname', 'host'])
+        assert res == [{'appname': 'foo', 'host': 'app2.prod'}]
 
     def test_get_aggregations(self):
         es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix=self.APP_LOGS_INDEX_NAME)
