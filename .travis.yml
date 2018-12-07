@@ -11,13 +11,13 @@ script:
 # @see https://github.com/nickstenning/travis-pip-cache/issues/1
 cache: pip
 
-# install elasticsearch 6.x
+# install elasticsearch 6.x (with x-pack for SQL queries support, hence not an oss version)
 # @see https://github.com/macbre/elasticsearch-query/issues/9
 env:
-  - ES_TEST_HOST=127.0.0.1 ES_VERSION=6.5.1 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-${ES_VERSION}.tar.gz
+  - ES_TEST_HOST=127.0.0.1 ES_VERSION=6.5.2 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz
 before_install:
   - wget ${ES_DOWNLOAD_URL}
-  - tar -xzf elasticsearch-oss-${ES_VERSION}.tar.gz
+  - tar -xzf elasticsearch-${ES_VERSION}.tar.gz
   - ./elasticsearch-${ES_VERSION}/bin/elasticsearch &
 before_script:
   # wait for the server to be fully up

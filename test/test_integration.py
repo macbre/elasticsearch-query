@@ -14,7 +14,7 @@ import elasticsearch_query
 import yaml
 
 from elasticsearch import Elasticsearch
-from elasticsearch.exceptions import NotFoundError
+from elasticsearch.exceptions import NotFoundError, RequestError
 
 # useful for test failures debugging
 import logging
@@ -158,11 +158,33 @@ class IntegrationTests(TestCase):
         assert es_query.count(query='*') == 0
 
     def test_query_by_sql(self):
-        self.skipTest('Not implemented yet')
         es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix=self.EMPTY_INDEX_NAME)
 
-        res = es_query.query_by_sql('SELECT host FROM %s WHERE host = "app2"'.format(self.APP_LOGS_INDEX_NAME))
+        res = es_query.query_by_sql(
+            sql='SELECT host FROM "{index}" WHERE host = \'app2.prod\''.format(index=self.APP_LOGS_INDEX_NAME))
         assert res == [{'host': 'app2.prod'}]
+
+        res = es_query.query_by_sql(
+            sql='SELECT appname, host FROM "{index}" WHERE host = \'app2.prod\''.format(index=self.APP_LOGS_INDEX_NAME))
+        assert res == [{'appname': 'foo', 'host': 'app2.prod'}]
+
+        res = es_query.query_by_sql(
+            sql='SELECT appname, host FROM "{index}" WHERE host = \'none\''.format(index=self.APP_LOGS_INDEX_NAME))
+        assert res == []
+
+        res = es_query.query_by_sql(
+            sql='SELECT host FROM "{index}" ORDER BY host LIMIT 1'.format(index=self.APP_LOGS_INDEX_NAME))
+        assert res == [{'host': 'app1.prod'}]
+
+        res = es_query.query_by_sql(
+            sql='SELECT count(*) AS cnt, MAX(time) FROM "{index}"'.format(index=self.APP_LOGS_INDEX_NAME))
+        assert res == [{'MAX(time)': 320.0, 'cnt': 3}]
+
+    def test_query_by_invalid_sql(self):
+        es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix=self.EMPTY_INDEX_NAME)
+
+        with raises(RequestError):
+            es_query.query_by_sql('FOO BAR')
 
     def test_not_existing_index(self):
         es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix='not-existing-one')

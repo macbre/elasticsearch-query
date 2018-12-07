@@ -246,24 +246,23 @@ class ElasticsearchQuery(object):
 
         return self._es.count(index=self._index, body=body).get('count')
 
-    def query_by_sql(self, sql, limit=None):
+    def query_by_sql(self, sql):
         """
         Returns entries matching given SQL query
 
         :type sql str
-        :type limit int
         :rtype: list[dict]
         """
         # https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-rest.html
+        # https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-syntax-select.html
         body = {'query': sql}
 
-        if limit:
-            body['fetch_size'] = limit
-
         resp = self._es.transport.perform_request('POST', '/_xpack/sql', params={'format': 'json'}, body=body)
-        print(resp)
 
-        return []
+        # build key-value dictionary for each row to match results returned by query_by_string
+        columns = [column['name'] for column in resp.get('columns')]
+
+        return [dict(zip(columns, row)) for row in resp.get('rows')]
 
     def get_to_timestamp(self):
         """ Return the upper time boundary to returned data """
