@@ -21,6 +21,6 @@ lint:
 publish:
 	# run git tag -a v0.0.0 before running make publish
 	python setup.py sdist
-	twine upload dist/*
+	twine upload --skip-existing dist/*
 
 .PHONY: test
