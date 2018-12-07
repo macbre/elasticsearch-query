@@ -157,6 +157,13 @@ class IntegrationTests(TestCase):
         es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix=self.EMPTY_INDEX_NAME)
         assert es_query.count(query='*') == 0
 
+    def test_query_by_sql(self):
+        self.skipTest('Not implemented yet')
+        es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix=self.EMPTY_INDEX_NAME)
+
+        res = es_query.query_by_sql('SELECT host FROM %s WHERE host = "app2"'.format(self.APP_LOGS_INDEX_NAME))
+        assert res == [{'host': 'app2.prod'}]
+
     def test_not_existing_index(self):
         es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix='not-existing-one')
 
