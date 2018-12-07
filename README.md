@@ -48,12 +48,12 @@ es_query.query_by_string(query='@message:"^PHP Fatal"', fields=['@message', '@es
 * `fields`: optional list of fields to fetch
 * `limit`: the number of results (defaults to 10).
 
-### `get_to_timestamp`
+### `count`
 
-> Returns the upper time boundary for the requested data.
+> Returns number of matching entries
 
 ```python
-es_query.get_to_timestamp()
+es_query.count(query='@message:"^PHP Fatal"')
 ```
 
 ## Integration tests

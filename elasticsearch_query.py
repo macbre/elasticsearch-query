@@ -223,6 +223,29 @@ class ElasticsearchQuery(object):
 
         return self._search(query, fields, limit, sampling)
 
+    def count(self, query):
+        """
+        Returns number of matching entries
+
+        :type query str
+        :rtype: int
+        """
+        body = {
+            "query": {
+                "bool": {
+                    "must": [{
+                        "query_string": {
+                            "query": query,
+                        }
+                    }]
+                }
+            }
+        }
+
+        body['query']['bool']['must'].append(self._get_timestamp_filer())
+
+        return self._es.count(index=self._index, body=body).get('count')
+
     def get_to_timestamp(self):
         """ Return the upper time boundary to returned data """
         return self._to

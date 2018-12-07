@@ -147,6 +147,16 @@ class IntegrationTests(TestCase):
             query='*', stats_field='time', group_by='appname.keyword', percents=(25, 50, 75))
         assert res == {'foo': {'count': 3, '25.0': 142.5, '50.0': 210.0, '75.0': 292.5}}
 
+    def test_count(self):
+        es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix=self.APP_LOGS_INDEX_NAME)
+
+        assert es_query.count(query='*') == 3
+        assert es_query.count(query='host: "app2"') == 1
+        assert es_query.count(query='host: "foo"') == 0
+
+        es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix=self.EMPTY_INDEX_NAME)
+        assert es_query.count(query='*') == 0
+
     def test_not_existing_index(self):
         es_query = ElasticsearchQuery(es_host=self.es_test_host, index_prefix='not-existing-one')
 
