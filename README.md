@@ -14,7 +14,7 @@ pip install elasticsearch-query
 
 ```python
 from elasticsearch_query import ElasticsearchQuery
-es_query = ElasticsearchQuery(es_host='es.prod', since=12345, period=900)
+es_query = ElasticsearchQuery(es_host='es.prod', since=12345, period=900, index_prefix='logstash-my-app')
 ```
 
 `es_host` needs to be specified with a host of Elasticsearch instance to connect.
@@ -23,6 +23,9 @@ Provide either `since` (absolute timestamp) or `period` (last N seconds):
 
 * `since`: UNIX timestamp data should be fetched since (if None, then period specifies the last n seconds).
 * `period`: period (in seconds) before now() to be used when since is empty (defaults to last 15 minutes).
+
+`index_prefix` argument will be used to build indices names to query in.
+They should follow the `index-name-YYYY.MM.DD` naming convention, e.g. `logstash-my-app-2014.08.19`.
 
 ### `get_rows`
 
