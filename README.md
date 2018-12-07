@@ -52,6 +52,8 @@ es_query.query_by_string(query='@message:"^PHP Fatal"', fields=['@message', '@es
 
 > Returns data matching the given [SQL query](https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-commands.html).
 
+This feature [requires](https://www.elastic.co/blog/opening-x-pack-phase-1-complete) **non-OSS version** of Elasticsearch ("To be clear, while the X-Pack source code is now available in the public repositories, it isn’t under an Open Source license").
+
 ```python
 es_query.query_by_sql(sql='SELECT host FROM "app-requests" WHERE host = \'app2.prod\'')
 ```
