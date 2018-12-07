@@ -25,6 +25,7 @@ setup(
             'pylint>=1.9.2, <=2.1.1',  # 2.x branch is for Python 3
             'pytest==4.0.0',
             'PyYAML==3.13',
+            'twine==1.12.1',
         ]
     },
     install_requires=[
