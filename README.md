@@ -48,6 +48,16 @@ es_query.query_by_string(query='@message:"^PHP Fatal"', fields=['@message', '@es
 * `fields`: optional list of fields to fetch
 * `limit`: the number of results (defaults to 10).
 
+### `query_by_sql`
+
+> Returns data matching the given [SQL query](https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-commands.html).
+
+```python
+es_query.query_by_sql(sql='SELECT host FROM "app-requests" WHERE host = \'app2.prod\'')
+```
+
+* `sql`: [SQL query](https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-commands.html) to be run
+
 ### `count`
 
 > Returns number of matching entries
