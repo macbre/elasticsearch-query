@@ -1,6 +1,6 @@
 from setuptools import setup
 
-VERSION = '2.3.0'
+VERSION = '2.4.0'
 
 # @see https://packaging.python.org/tutorials/packaging-projects/#creating-setup-py
 with open("README.md", "r") as fh:
